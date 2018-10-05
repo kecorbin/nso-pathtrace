@@ -1,0 +1,59 @@
+module pathtrace {
+
+  namespace "http://example.com/pathtrace";
+  prefix pathtrace;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Pathtrace service";
+
+  revision 2018-10-05 {
+    description
+      "Initial revision.";
+  }
+
+  list pathtrace {
+    description "Perform a pathtrace";
+
+    key name;
+    leaf name {
+      tailf:info "Unique service id";
+      tailf:cli-allow-range;
+      type string;
+    }
+
+    leaf device {
+      type leafref {
+        path "/ncs:devices/ncs:device/ncs:name";
+      }
+    }
+
+    leaf destination {
+      type inet:ipv4-address;
+    }
+
+    tailf:action run {
+      tailf:actionpoint run;
+      output {
+        leaf result {
+          type string;
+        }
+        leaf ready {
+          type boolean;
+        }
+      }
+    }
+
+    uses ncs:service-data;
+    ncs:servicepoint pathtrace-servicepoint;
+  }
+}
